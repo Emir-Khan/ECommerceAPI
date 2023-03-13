@@ -1,18 +1,17 @@
 ﻿
-using ETicaretAPI.Application.Abstractions;
-using ETicaretAPI.Application.Features.Commands.CreateProduct;
-using ETicaretAPI.Application.Features.Queries.GetAllProduct;
-using ETicaretAPI.Application.Repositories;
-using ETicaretAPI.Application.RequestParameters;
-using ETicaretAPI.Application.ViewModels.Products;
-using ETicaretAPI.Domain.Entities;
+using ECommerceAPI.Application.Abstractions;
+using ECommerceAPI.Application.Features.Commands.CreateProduct;
+using ECommerceAPI.Application.Features.Queries.GetAllProduct;
+using ECommerceAPI.Application.Repositories;
+using ECommerceAPI.Application.ViewModels.Products;
+using ECommerceAPI.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
-namespace ETicaretAPI.API.Controllers
+namespace ECommerceAPI.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

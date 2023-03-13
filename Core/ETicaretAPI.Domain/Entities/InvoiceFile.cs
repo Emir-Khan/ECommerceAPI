@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETicaretAPI.Domain.Entities
+namespace ECommerceAPI.Domain.Entities
 {
     public class InvoiceFile : File
     {

@@ -1,7 +1,7 @@
-﻿using ETicaretAPI.Application.Repositories;
+﻿using ECommerceAPI.Application.Repositories;
 using MediatR;
 
-namespace ETicaretAPI.Application.Features.Queries.GetAllProduct
+namespace ECommerceAPI.Application.Features.Queries.GetAllProduct
 {
     public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQueryRequest, GetAllProductQueryResponse>
     {

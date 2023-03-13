@@ -12,8 +12,8 @@
     "ETicaretAPI.API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "launchUrl": "swagger",
+      //"launchBrowser": false,
+      //"launchUrl": "swagger",
       "applicationUrl": "https://localhost:7131;http://localhost:5131",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

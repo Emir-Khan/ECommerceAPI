@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace ETicaretAPI.Infrastructure.StaticServices
+namespace ECommerceAPI.Infrastructure.StaticServices
 {
     public class RenameHelper
     {

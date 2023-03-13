@@ -1,4 +1,4 @@
-﻿using ETicaretAPI.Infrastructure.StaticServices;
+﻿using ECommerceAPI.Infrastructure.StaticServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -8,13 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETicaretAPI.Infrastructure.Services
+namespace ECommerceAPI.Infrastructure.Services
 {
     public class FileService
     {
         private static async Task<string> FileRenameAsync(string path, string fileName)
         {
-            string newFileName = await Task.Run<string>(() =>
+            string newFileName = await Task.Run(() =>
             {
                 string extension = Path.GetExtension(fileName);
                 string oldName = Path.GetFileNameWithoutExtension(fileName);

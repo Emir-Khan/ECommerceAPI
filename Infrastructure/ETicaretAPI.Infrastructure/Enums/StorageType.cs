@@ -1,4 +1,4 @@
-﻿namespace ETicaretAPI.Infrastructure.Enums
+﻿namespace ECommerceAPI.Infrastructure.Enums
 {
     public enum StorageType
     {

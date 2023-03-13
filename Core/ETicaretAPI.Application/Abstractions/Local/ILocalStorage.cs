@@ -1,10 +1,11 @@
-﻿using System;
+﻿using ECommerceAPI.Application.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETicaretAPI.Application.Abstractions.Local
+namespace ECommerceAPI.Application.Abstractions.Local
 {
     public interface ILocalStorage : IStorage
     {

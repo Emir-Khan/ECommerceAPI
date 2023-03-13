@@ -1,8 +1,8 @@
-﻿using ETicaretAPI.Application.Abstractions.Local;
+﻿using ECommerceAPI.Application.Abstractions.Local;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
-namespace ETicaretAPI.Infrastructure.Services.Storage.Local
+namespace ECommerceAPI.Infrastructure.Services.Storage.Local
 {
     public class LocalStorage : Storage, ILocalStorage
     {
@@ -47,7 +47,7 @@ namespace ETicaretAPI.Infrastructure.Services.Storage.Local
             List<(string fileName, string path)> datas = new();
             foreach (IFormFile file in files)
             {
-                string newFileName = await FileRenameAsync(path, file.Name, GetFiles,HasFile);
+                string newFileName = await FileRenameAsync(path, file.Name, GetFiles, HasFile);
 
                 bool result = await CopyFileAsync($"{uploadPath}\\{newFileName}", file);
                 datas.Add((newFileName, $"{path}\\{newFileName}"));

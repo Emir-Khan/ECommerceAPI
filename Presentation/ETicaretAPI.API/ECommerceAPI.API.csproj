@@ -15,9 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\ETicaretAPI.Application\ETicaretAPI.Application.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\ETicaretAPI.Infrastructure\ETicaretAPI.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\ETicaretAPI.Persistence\ETicaretAPI.Persistence.csproj" />
+    <ProjectReference Include="..\..\Core\ETicaretAPI.Application\ECommerceAPI.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ETicaretAPI.Infrastructure\ECommerceAPI.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ETicaretAPI.Persistence\ECommerceAPI.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,11 +1,11 @@
-﻿using ETicaretAPI.Infrastructure.StaticServices;
+﻿using ECommerceAPI.Infrastructure.StaticServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETicaretAPI.Infrastructure.Services.Storage
+namespace ECommerceAPI.Infrastructure.Services.Storage
 {
     public class Storage
     {
@@ -13,7 +13,7 @@ namespace ETicaretAPI.Infrastructure.Services.Storage
         protected delegate bool HasFile(string pathOrContainerName, string fileName);
         protected async Task<string> FileRenameAsync(string pathOrContainerName, string fileName, GetFiles getFilesMethod, HasFile hasFileMehod)
         {
-            string newFileName = await Task.Run<string>(() =>
+            string newFileName = await Task.Run(() =>
             {
                 string extension = Path.GetExtension(fileName);
                 string oldName = Path.GetFileNameWithoutExtension(fileName);

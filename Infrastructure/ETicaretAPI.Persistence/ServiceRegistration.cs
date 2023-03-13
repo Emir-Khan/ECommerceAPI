@@ -1,15 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ETicaretAPI.Persistence.Contexts;
+﻿using ECommerceAPI.Application.Repositories;
+using ECommerceAPI.Persistence.Contexts;
+using ECommerceAPI.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ETicaretAPI.Application.Repositories;
-using ETicaretAPI.Persistence.Repositories;
 
-namespace ETicaretAPI.Persistence
+namespace ECommerceAPI.Persistence
 {
     public static class ServiceRegistration
     {

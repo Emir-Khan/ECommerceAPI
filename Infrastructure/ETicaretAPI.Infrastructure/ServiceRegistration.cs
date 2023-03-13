@@ -1,13 +1,11 @@
-﻿
-
-using ETicaretAPI.Application.Abstractions;
-using ETicaretAPI.Infrastructure.Enums;
-using ETicaretAPI.Infrastructure.Services.Storage;
-using ETicaretAPI.Infrastructure.Services.Storage.Azure;
-using ETicaretAPI.Infrastructure.Services.Storage.Local;
+﻿using ECommerceAPI.Application.Abstractions;
+using ECommerceAPI.Infrastructure.Enums;
+using ECommerceAPI.Infrastructure.Services.Storage;
+using ECommerceAPI.Infrastructure.Services.Storage.Azure;
+using ECommerceAPI.Infrastructure.Services.Storage.Local;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ETicaretAPI.Infrastructure
+namespace ECommerceAPI.Infrastructure
 {
     public static class ServiceRegistration
     {
@@ -34,7 +32,7 @@ namespace ETicaretAPI.Infrastructure
                     break;
                 default:
                     break;
-            }            
+            }
         }
     }
 }

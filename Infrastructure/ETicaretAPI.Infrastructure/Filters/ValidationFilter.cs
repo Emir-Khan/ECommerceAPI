@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETicaretAPI.Infrastructure.Filters
+namespace ECommerceAPI.Infrastructure.Filters
 {
     public class ValidationFilter : IAsyncActionFilter
     {

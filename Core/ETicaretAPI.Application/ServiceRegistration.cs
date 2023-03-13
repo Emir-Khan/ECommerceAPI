@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace ETicaretAPI.Application
+namespace ECommerceAPI.Application
 {
     public static class ServiceRegistration
     {

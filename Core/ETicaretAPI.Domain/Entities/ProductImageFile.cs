@@ -1,4 +1,4 @@
-﻿namespace ETicaretAPI.Domain.Entities
+﻿namespace ECommerceAPI.Domain.Entities
 {
     public class ProductImageFile : File
     {

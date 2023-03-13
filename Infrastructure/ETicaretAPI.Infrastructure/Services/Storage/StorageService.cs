@@ -1,7 +1,7 @@
-﻿using ETicaretAPI.Application.Abstractions;
+﻿using ECommerceAPI.Application.Abstractions;
 using Microsoft.AspNetCore.Http;
 
-namespace ETicaretAPI.Infrastructure.Services.Storage
+namespace ECommerceAPI.Infrastructure.Services.Storage
 {
     public class StorageService : IStorageService
     {

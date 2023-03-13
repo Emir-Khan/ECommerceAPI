@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETicaretAPI.Application.Repositories
+namespace ECommerceAPI.Application.Repositories
 {
-    public interface IFileWriteRepository:IWriteRepository<Domain.Entities.File>
+    public interface IFileWriteRepository : IWriteRepository<Domain.Entities.File>
     {
     }
 }

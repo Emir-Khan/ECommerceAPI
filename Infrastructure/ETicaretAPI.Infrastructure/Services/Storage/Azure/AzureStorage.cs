@@ -1,6 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using ETicaretAPI.Application.Abstractions.Azure;
+using ECommerceAPI.Application.Abstractions.Azure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETicaretAPI.Infrastructure.Services.Storage.Azure
+namespace ECommerceAPI.Infrastructure.Services.Storage.Azure
 {
     public class AzureStorage : Storage, IAzureStorage
     {
@@ -47,7 +47,7 @@ namespace ETicaretAPI.Infrastructure.Services.Storage.Azure
             List<(string fileName, string pathOrContainerName)> data = new();
             foreach (IFormFile file in files)
             {
-                string newFileName = await FileRenameAsync(containerName, file.Name, GetFiles,HasFile);
+                string newFileName = await FileRenameAsync(containerName, file.Name, GetFiles, HasFile);
                 BlobClient blobClient = _blobContainerClient.GetBlobClient(newFileName);
                 await blobClient.UploadAsync(file.OpenReadStream());
                 data.Add((newFileName, $"{containerName}/{newFileName}"));
