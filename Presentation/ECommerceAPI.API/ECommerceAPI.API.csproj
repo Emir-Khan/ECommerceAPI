@@ -15,13 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\ETicaretAPI.Application\ECommerceAPI.Application.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\ETicaretAPI.Infrastructure\ECommerceAPI.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\ETicaretAPI.Persistence\ECommerceAPI.Persistence.csproj" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <ProjectReference Include="..\..\Core\ECommerceAPI.Application\ECommerceAPI.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ECommerceAPI.Infrastructure\ECommerceAPI.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ECommerceAPI.Persistence\ECommerceAPI.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

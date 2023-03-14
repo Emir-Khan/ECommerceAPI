@@ -15,11 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ETicaretAPI.Domain\ECommerceAPI.Domain.csproj" />
+    <Folder Include="Features\Commands\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Commands\" />
+    <ProjectReference Include="..\ECommerceAPI.Domain\ECommerceAPI.Domain.csproj" />
   </ItemGroup>
 
 </Project>
