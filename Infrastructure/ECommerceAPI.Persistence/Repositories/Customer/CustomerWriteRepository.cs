@@ -12,7 +12,7 @@ namespace ECommerceAPI.Persistence.Repositories
 {
     public class CustomerWriteRepository : WriteRepository<Customer>, ICustomerWriteRepository
     {
-        public CustomerWriteRepository(ETicaretAPIDbContext context) : base(context)
+        public CustomerWriteRepository(ECommerceAPIDbContext context) : base(context)
         {
         }
     }

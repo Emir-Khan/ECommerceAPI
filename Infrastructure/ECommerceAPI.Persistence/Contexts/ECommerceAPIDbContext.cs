@@ -1,17 +1,14 @@
 ﻿using ECommerceAPI.Domain.Entities;
 using ECommerceAPI.Domain.Entities.Common;
+using ECommerceAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ECommerceAPI.Persistence.Contexts
 {
-    public class ETicaretAPIDbContext : DbContext
+    public class ECommerceAPIDbContext : IdentityDbContext<AppUser,AppRole,string>
     {
-        public ETicaretAPIDbContext(DbContextOptions options) : base(options)
+        public ECommerceAPIDbContext(DbContextOptions options) : base(options)
         { }
 
         public DbSet<Product> Products { get; set; }

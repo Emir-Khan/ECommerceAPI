@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Persistence
 {
-    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ETicaretAPIDbContext>
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ECommerceAPIDbContext>
     {
-        public ETicaretAPIDbContext CreateDbContext(string[] args)
+        public ECommerceAPIDbContext CreateDbContext(string[] args)
         {
-            DbContextOptionsBuilder<ETicaretAPIDbContext> dbContextOptionsBuilder = new();
+            DbContextOptionsBuilder<ECommerceAPIDbContext> dbContextOptionsBuilder = new();
             dbContextOptionsBuilder.UseNpgsql(Configuration.ConnectionString);
             return new(dbContextOptionsBuilder.Options);
         }

@@ -13,8 +13,8 @@ namespace ECommerceAPI.Persistence.Repositories
 {
     public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
     {
-        private readonly ETicaretAPIDbContext _context;
-        public ReadRepository(ETicaretAPIDbContext context)
+        private readonly ECommerceAPIDbContext _context;
+        public ReadRepository(ECommerceAPIDbContext context)
         {
             _context = context;
         }

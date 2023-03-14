@@ -11,7 +11,7 @@ namespace ECommerceAPI.Persistence.Repositories
 {
     public class InvoiceFileWriteRepository : WriteRepository<InvoiceFile>, IInvoiceFileWriteRepository
     {
-        public InvoiceFileWriteRepository(ETicaretAPIDbContext context) : base(context)
+        public InvoiceFileWriteRepository(ECommerceAPIDbContext context) : base(context)
         {
         }
     }

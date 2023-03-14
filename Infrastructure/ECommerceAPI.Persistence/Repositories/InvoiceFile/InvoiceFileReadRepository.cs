@@ -12,7 +12,7 @@ namespace ECommerceAPI.Persistence.Repositories
 {
     public class InvoiceFileReadRepository : ReadRepository<InvoiceFile>, IInvoiceFileReadRepository
     {
-        public InvoiceFileReadRepository(ETicaretAPIDbContext context) : base(context)
+        public InvoiceFileReadRepository(ECommerceAPIDbContext context) : base(context)
         {
         }
     }

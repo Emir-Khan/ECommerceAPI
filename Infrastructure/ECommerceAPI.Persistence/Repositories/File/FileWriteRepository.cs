@@ -10,7 +10,7 @@ namespace ECommerceAPI.Persistence.Repositories
 {
     public class FileWriteRepository : WriteRepository<Domain.Entities.File>, IFileWriteRepository
     {
-        public FileWriteRepository(ETicaretAPIDbContext context) : base(context)
+        public FileWriteRepository(ECommerceAPIDbContext context) : base(context)
         {
         }
     }

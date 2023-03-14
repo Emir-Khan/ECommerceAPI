@@ -11,7 +11,7 @@ namespace ECommerceAPI.Persistence.Repositories
 {
     public class ProductImageFileWriteRepository : WriteRepository<ProductImageFile>, IProductImageFileWriteRepository
     {
-        public ProductImageFileWriteRepository(ETicaretAPIDbContext context) : base(context)
+        public ProductImageFileWriteRepository(ECommerceAPIDbContext context) : base(context)
         {
         }
     }

@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ETicaretAPI.Persistence.Migrations
 {
-    [DbContext(typeof(ETicaretAPIDbContext))]
+    [DbContext(typeof(ECommerceAPIDbContext))]
     [Migration("20230311154101_mig_5")]
     partial class mig_5
     {

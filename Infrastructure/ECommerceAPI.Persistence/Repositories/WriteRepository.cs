@@ -13,8 +13,8 @@ namespace ECommerceAPI.Persistence.Repositories
 {
     public class WriteRepository<T> : IWriteRepository<T> where T : BaseEntity
     {
-        readonly private ETicaretAPIDbContext _context;
-        public WriteRepository(ETicaretAPIDbContext context)
+        readonly private ECommerceAPIDbContext _context;
+        public WriteRepository(ECommerceAPIDbContext context)
         {
             _context = context;
         }
