@@ -1,4 +1,4 @@
-﻿using ECommerceAPI.Application.Abstractions.Local;
+﻿using ECommerceAPI.Application.Abstractions.Storage.Local;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 

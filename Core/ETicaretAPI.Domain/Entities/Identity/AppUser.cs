@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerceAPI.Application.Features.Commands.CreateProduct
+namespace ECommerceAPI.Domain.Entities.Identity
 {
-    public class CreateProductCommandResponse
+    public class AppUser
     {
     }
 }

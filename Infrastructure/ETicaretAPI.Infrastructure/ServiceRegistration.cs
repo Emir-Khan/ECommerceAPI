@@ -1,4 +1,4 @@
-﻿using ECommerceAPI.Application.Abstractions;
+﻿using ECommerceAPI.Application.Abstractions.Storage;
 using ECommerceAPI.Infrastructure.Enums;
 using ECommerceAPI.Infrastructure.Services.Storage;
 using ECommerceAPI.Infrastructure.Services.Storage.Azure;

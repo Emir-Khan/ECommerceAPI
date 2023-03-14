@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerceAPI.Application.Features.Commands.CreateProduct
+namespace ECommerceAPI.Application.Features.Commands.Product.CreateProduct
 {
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommandRequest, CreateProductCommandResponse>
     {
-        private IProductWriteRepository _productWriteRepository;
+        readonly IProductWriteRepository _productWriteRepository;
 
         public CreateProductCommandHandler(IProductWriteRepository productWriteRepository)
         {

@@ -1,4 +1,4 @@
-﻿using ECommerceAPI.Application.Abstractions;
+﻿using ECommerceAPI.Application.Abstractions.Storage;
 using Microsoft.AspNetCore.Http;
 
 namespace ECommerceAPI.Infrastructure.Services.Storage

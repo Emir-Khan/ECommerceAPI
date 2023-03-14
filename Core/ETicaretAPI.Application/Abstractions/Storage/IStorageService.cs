@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerceAPI.Application.Abstractions
+namespace ECommerceAPI.Application.Abstractions.Storage
 {
     public interface IStorageService : IStorage
     {
