@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ETicaretAPI.Persistence.Migrations
+namespace ECommerceAPI.Persistence.Migrations
 {
     public partial class mig_5 : Migration
     {

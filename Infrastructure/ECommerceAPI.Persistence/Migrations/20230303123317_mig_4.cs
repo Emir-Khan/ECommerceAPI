@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace ETicaretAPI.Persistence.Migrations
+namespace ECommerceAPI.Persistence.Migrations
 {
     public partial class mig_4 : Migration
     {
