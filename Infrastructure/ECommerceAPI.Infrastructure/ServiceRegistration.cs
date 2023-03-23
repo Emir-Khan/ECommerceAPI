@@ -14,7 +14,7 @@ namespace ECommerceAPI.Infrastructure
         public static void AddInfrastructureServices(this IServiceCollection services)
         {
             services.AddScoped<IStorageService, StorageService>();
-            services.AddScoped<ITokenHandler, TokenHandler >();
+            services.AddScoped<ITokenHandler, TokenHandler>();
         }
         public static void AddStorage<T>(this IServiceCollection services) where T : Storage, IStorage
         {
