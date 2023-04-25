@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceAPI.Persistence.Contexts
 {
-    public class ECommerceAPIDbContext : IdentityDbContext<AppUser,AppRole,string>
+    public class ECommerceAPIDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
         public ECommerceAPIDbContext(DbContextOptions options) : base(options)
         { }
@@ -23,7 +23,11 @@ namespace ECommerceAPI.Persistence.Contexts
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Order>()
-                .HasKey(b => b.Id);
+                .HasKey(o => o.Id);
+
+            builder.Entity<Order>()
+                .HasIndex(o => o.OrderCode)
+                .IsUnique();
 
             builder.Entity<Basket>()
                 .HasOne(b => b.Order)

@@ -114,5 +114,6 @@ namespace ECommerceAPI.Persistence.Services
                 await _basketItemWriteRepository.SaveAsync();
             }
         }
+        public Basket? Basket => ContextUser().Result;
     }
 }

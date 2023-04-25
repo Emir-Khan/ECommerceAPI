@@ -3,6 +3,7 @@ using System;
 using ECommerceAPI.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ECommerceAPI.Persistence.Migrations
 {
     [DbContext(typeof(ECommerceAPIDbContext))]
-    partial class ECommerceAPIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230419120959_mig_2")]
+    partial class mig_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,11 +242,10 @@ namespace ECommerceAPI.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("OrderCode")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -253,8 +254,7 @@ namespace ECommerceAPI.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderCode")
-                        .IsUnique();
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
                 });
@@ -392,6 +392,21 @@ namespace ECommerceAPI.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("OrderProduct", b =>
+                {
+                    b.Property<Guid>("OrdersId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("OrdersId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("OrderProduct");
+                });
+
             modelBuilder.Entity("ProductProductImageFile", b =>
                 {
                     b.Property<Guid>("ProductImageFilesId")
@@ -459,6 +474,10 @@ namespace ECommerceAPI.Persistence.Migrations
 
             modelBuilder.Entity("ECommerceAPI.Domain.Entities.Order", b =>
                 {
+                    b.HasOne("ECommerceAPI.Domain.Entities.Customer", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId");
+
                     b.HasOne("ECommerceAPI.Domain.Entities.Basket", "Basket")
                         .WithOne("Order")
                         .HasForeignKey("ECommerceAPI.Domain.Entities.Order", "Id")
@@ -519,6 +538,21 @@ namespace ECommerceAPI.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OrderProduct", b =>
+                {
+                    b.HasOne("ECommerceAPI.Domain.Entities.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECommerceAPI.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ProductProductImageFile", b =>
                 {
                     b.HasOne("ECommerceAPI.Domain.Entities.ProductImageFile", null)
@@ -540,6 +574,11 @@ namespace ECommerceAPI.Persistence.Migrations
 
                     b.Navigation("Order")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ECommerceAPI.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("ECommerceAPI.Domain.Entities.Identity.AppUser", b =>
