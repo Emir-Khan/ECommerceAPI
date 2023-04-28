@@ -2,14 +2,13 @@
 using ECommerceAPI.Application.Abstractions.Token;
 using ECommerceAPI.Application.DTOs;
 using ECommerceAPI.Application.DTOs.Facebook;
+using ECommerceAPI.Application.DTOs.User;
 using ECommerceAPI.Application.Exceptions;
-using ECommerceAPI.Application.Features.Commands.AppUser.LoginUser;
+using ECommerceAPI.Application.Helpers;
 using ECommerceAPI.Domain.Entities.Identity;
 using Google.Apis.Auth;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using System.Net.Http;
 using System.Security.Authentication;
 using System.Text.Json;
 
@@ -23,8 +22,9 @@ namespace ECommerceAPI.Persistence.Services
         readonly UserManager<AppUser> _userManager;
         readonly SignInManager<AppUser> _signInManager;
         readonly IUserService _userService;
+        readonly IMailService _mailService;
 
-        public AuthService(IHttpClientFactory httpClientFactory, IConfiguration configuration, UserManager<AppUser> userManager, ITokenHandler tokenHandler, SignInManager<AppUser> signInManager, IUserService userService)
+        public AuthService(IHttpClientFactory httpClientFactory, IConfiguration configuration, UserManager<AppUser> userManager, ITokenHandler tokenHandler, SignInManager<AppUser> signInManager, IUserService userService, IMailService mailService)
         {
             _httpClient = httpClientFactory.CreateClient();
             _configuration = configuration;
@@ -32,6 +32,7 @@ namespace ECommerceAPI.Persistence.Services
             _tokenHandler = tokenHandler;
             _signInManager = signInManager;
             _userService = userService;
+            _mailService = mailService;
         }
         async Task<Token> CreateUserExternalAsync(AppUser user, string email, string name, UserLoginInfo info, int accessTokenLifeTime)
         {
@@ -57,7 +58,7 @@ namespace ECommerceAPI.Persistence.Services
             {
                 await _userManager.AddLoginAsync(user, info);
                 Token token = _tokenHandler.CreateAccessToken(user, accessTokenLifeTime);
-                await _userService.UpdateRefreshToken(token.RefreshToken, token.Expiration, 900, user);
+                await _userService.UpdateRefreshTokenAsync(token.RefreshToken, token.Expiration, 900, user);
                 return token;
             }
             throw new Exception("Invalid external authentication");
@@ -114,7 +115,7 @@ namespace ECommerceAPI.Persistence.Services
             if (result.Succeeded)
             {
                 Token token = _tokenHandler.CreateAccessToken(user, accessTokenLifetime);
-                await _userService.UpdateRefreshToken(token.RefreshToken, token.Expiration, 900, user);
+                await _userService.UpdateRefreshTokenAsync(token.RefreshToken, token.Expiration, 900, user);
                 return token;
             }
             throw new AuthenticationException();
@@ -126,10 +127,43 @@ namespace ECommerceAPI.Persistence.Services
             if (user != null && user.RefreshTokenEndDate > DateTime.UtcNow)
             {
                 Token token = _tokenHandler.CreateAccessToken(user, 900);
-                await _userService.UpdateRefreshToken(token.RefreshToken, token.Expiration, 900, user);
+                await _userService.UpdateRefreshTokenAsync(token.RefreshToken, token.Expiration, 900, user);
                 return token;
             }
             throw new UserNotFoundException();
+        }
+
+        public async Task PasswordResetAsnyc(string email)
+        {
+            AppUser user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                resetToken = resetToken.UrlEncode();
+
+                await _mailService.SendPasswordResetMailAsync(email, user.Id, resetToken);
+            }
+        }
+
+        public async Task<VerifyUserResetTokenResponse> VerifyResetTokenAsync(string resetToken, string userId)
+        {
+            AppUser user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                resetToken = resetToken.UrlDecode();
+
+                var state = await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", resetToken);
+                return new()
+                {
+                    State = state,
+                    Email = user.Email
+                };
+            }
+            return new()
+            {
+                State = false
+            };
         }
     }
 }
