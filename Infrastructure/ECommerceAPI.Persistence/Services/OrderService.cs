@@ -1,6 +1,7 @@
 ﻿using ECommerceAPI.Application.Abstractions.Services;
 using ECommerceAPI.Application.DTOs.Order;
 using ECommerceAPI.Application.Repositories;
+using ECommerceAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceAPI.Persistence.Services
@@ -9,11 +10,25 @@ namespace ECommerceAPI.Persistence.Services
     {
         readonly IOrderWriteRepository _orderWriteRepository;
         readonly IOrderReadRepository _orderReadRepository;
+        readonly ICompletedOrderWriteRepository _completedOrderWriteRepository;
+        readonly ICompletedOrderReadRepository _completedOrderReadRepository;
 
-        public OrderService(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository)
+        public OrderService(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository, ICompletedOrderWriteRepository completedOrderWriteRepository, ICompletedOrderReadRepository completedOrderReadRepository)
         {
             _orderWriteRepository = orderWriteRepository;
             _orderReadRepository = orderReadRepository;
+            _completedOrderWriteRepository = completedOrderWriteRepository;
+            _completedOrderReadRepository = completedOrderReadRepository;
+        }
+
+        public async Task CompleteOrderAsync(string id)
+        {
+            Order order = await _orderReadRepository.GetByIdAsync(id);
+            if (order != null)
+            {
+                await _completedOrderWriteRepository.AddAsync(new() { OrderId = Guid.Parse(id) });
+                await _completedOrderWriteRepository.SaveAsync();
+            }
         }
 
         public async Task CreateOrder(CreateOrder createOrder)
@@ -36,7 +51,20 @@ namespace ECommerceAPI.Persistence.Services
                 .Include(u => u.Basket).ThenInclude(b => b.BasketItems).ThenInclude(bi => bi.Product);
 
 
-            var data = query.Skip(page * size).Take(size);
+            var paginatedData = query.Skip(page * size).Take(size);
+
+            var data = from order in paginatedData
+                       join completedOrder in _completedOrderReadRepository.Table
+                               on order.Id equals completedOrder.OrderId into co
+                       from _co in co.DefaultIfEmpty()
+                       select new
+                       {
+                           order.Id,
+                           order.CreatedDate,
+                           order.OrderCode,
+                           order.Basket,
+                           Completed = _co != null
+                       };
 
             return new()
             {
@@ -47,18 +75,33 @@ namespace ECommerceAPI.Persistence.Services
                     o.OrderCode,
                     o.Basket.User.UserName,
                     o.CreatedDate,
-                    TotalPrice = o.Basket.BasketItems.Sum(bi => bi.Product.Price * bi.Quantity)
+                    TotalPrice = o.Basket.BasketItems.Sum(bi => bi.Product.Price * bi.Quantity),
+                    o.Completed
                 }).ToListAsync()
             };
         }
 
         public async Task<SingleOrder> GetOrderByIdAsync(string id)
         {
-            var data = await _orderReadRepository.Table
+            var includedData =  _orderReadRepository.Table
                 .Include(o => o.Basket)
                 .ThenInclude(b => b.BasketItems)
-                .ThenInclude(bi => bi.Product)
-                .FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
+                .ThenInclude(bi => bi.Product);
+
+            var data = await (from order in includedData
+                               join completedOrder in _completedOrderReadRepository.Table
+                                    on order.Id equals completedOrder.OrderId into co
+                               from _co in co.DefaultIfEmpty()
+                               select new
+                               {
+                                   order.Id,
+                                   order.CreatedDate,
+                                   order.OrderCode,
+                                   order.Basket,
+                                   Completed = _co != null,
+                                   order.Address,
+                                   order.Description
+                               }).FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
 
             return new()
             {
@@ -72,7 +115,8 @@ namespace ECommerceAPI.Persistence.Services
                 Address = data.Address,
                 CreatedDate = data.CreatedDate,
                 Description = data.Description,
-                OrderCode = data.OrderCode
+                OrderCode = data.OrderCode,
+                Completed = data.Completed
             };
         }
     }
