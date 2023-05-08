@@ -21,14 +21,22 @@ namespace ECommerceAPI.Persistence.Services
             _completedOrderReadRepository = completedOrderReadRepository;
         }
 
-        public async Task CompleteOrderAsync(string id)
+        public async Task<(bool, CompletedOrderDTO?)> CompleteOrderAsync(string id)
         {
-            Order order = await _orderReadRepository.GetByIdAsync(id);
+            Order? order = await _orderReadRepository.Table.Include(o => o.Basket).ThenInclude(b => b.User)
+                .FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
             if (order != null)
             {
                 await _completedOrderWriteRepository.AddAsync(new() { OrderId = Guid.Parse(id) });
-                await _completedOrderWriteRepository.SaveAsync();
+                return (await _completedOrderWriteRepository.SaveAsync() > 0, new()
+                {
+                    NameSurname = order.Basket.User.NameSurname,
+                    OrderCode = order.OrderCode,
+                    OrderDate = order.CreatedDate,
+                    Email = order.Basket.User.Email
+                });
             }
+            return (false, null);
         }
 
         public async Task CreateOrder(CreateOrder createOrder)
@@ -83,25 +91,25 @@ namespace ECommerceAPI.Persistence.Services
 
         public async Task<SingleOrder> GetOrderByIdAsync(string id)
         {
-            var includedData =  _orderReadRepository.Table
+            var includedData = _orderReadRepository.Table
                 .Include(o => o.Basket)
                 .ThenInclude(b => b.BasketItems)
                 .ThenInclude(bi => bi.Product);
 
             var data = await (from order in includedData
-                               join completedOrder in _completedOrderReadRepository.Table
-                                    on order.Id equals completedOrder.OrderId into co
-                               from _co in co.DefaultIfEmpty()
-                               select new
-                               {
-                                   order.Id,
-                                   order.CreatedDate,
-                                   order.OrderCode,
-                                   order.Basket,
-                                   Completed = _co != null,
-                                   order.Address,
-                                   order.Description
-                               }).FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
+                              join completedOrder in _completedOrderReadRepository.Table
+                                   on order.Id equals completedOrder.OrderId into co
+                              from _co in co.DefaultIfEmpty()
+                              select new
+                              {
+                                  order.Id,
+                                  order.CreatedDate,
+                                  order.OrderCode,
+                                  order.Basket,
+                                  Completed = _co != null,
+                                  order.Address,
+                                  order.Description
+                              }).FirstOrDefaultAsync(o => o.Id == Guid.Parse(id));
 
             return new()
             {

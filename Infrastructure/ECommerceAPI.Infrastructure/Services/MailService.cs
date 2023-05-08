@@ -15,6 +15,22 @@ namespace ECommerceAPI.Infrastructure.Services
             _configuration = configuration;
         }
 
+        public Task SendCompletedOrderMailAsync(string to, string userName, string orderCode, DateTime orderDate)
+        {
+            StringBuilder mail = new();
+            mail.AppendLine("Merhaba ");
+            mail.AppendLine(userName);
+            mail.AppendLine("<br>Siparişiniz başarıyla tamamlanmıştır.<br><br>Sipariş Kodu : ");
+            mail.AppendLine(orderCode);
+            mail.AppendLine("<br>Sipariş Tarihi : ");
+            mail.AppendLine(orderDate.ToString("dd.MM.yyyy HH:mm:ss"));
+            mail.AppendLine("<br><br>Saygılarımızla...<br><br><br>Emirhan-Commercce");
+            mail.AppendLine(
+                "<br><br><span style=\"font-size:12px;\">NOT : Eğer ki bu talep tarafınızca gerçekleştirilmemişse lütfen bu maili ciddiye almayınız.</span>");
+
+            return SendMailAsync(to, $"{orderCode} No'lu Siparişiniz Tamamlandı", mail.ToString());
+        }
+
         public async Task SendMailAsync(string to, string subject, string body, bool isBodyHtml = true)
         {
             await SendMailAsync(new[] { to }, subject, body, isBodyHtml);
