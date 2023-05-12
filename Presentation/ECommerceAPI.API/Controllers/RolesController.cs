@@ -53,7 +53,7 @@ namespace ECommerceAPI.API.Controllers
             var response = await _mediator.Send(updateRoleCommandRequest);
             return Ok(response);
         }
-        [HttpDelete("{name}")]
+        [HttpDelete("{id}")]
         [AuthorizeDefinition(ActionType = ActionType.Deleting, Definition = "Delete Role", Menu = "Roles")]
         public async Task<IActionResult> DeleteRole([FromRoute] DeleteRoleCommandRequest deleteRoleCommandRequest)
         {
