@@ -4,6 +4,7 @@ using ECommerceAPI.Application.Exceptions;
 using ECommerceAPI.Application.Helpers;
 using ECommerceAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceAPI.Persistence.Services
 {
@@ -38,6 +39,19 @@ namespace ECommerceAPI.Persistence.Services
             return response;
         }
 
+        public async Task<List<ListUser>> GetAllUsersAsync(int page, int size)
+        {
+            return await _userManager.Users.Skip(page * size).Take(size).Select(u => new ListUser
+            {
+                Id = u.Id,
+                Email = u.Email,
+                NameSurname = u.NameSurname,
+                UserName = u.UserName,
+                TwoFactorEnabled = u.TwoFactorEnabled
+            }).ToListAsync();
+        }
+        public int TotalUsersCount => _userManager.Users.Count();
+
         public async Task UpdatePasswordAsync(string userId, string resetToken, string newPassword)
         {
             AppUser user = await _userManager.FindByIdAsync(userId);
@@ -60,6 +74,29 @@ namespace ECommerceAPI.Persistence.Services
             user.RefreshToken = refreshToken;
             user.RefreshTokenEndDate = accessTokenDate.AddSeconds(addAccessTokenTime);
             await _userManager.UpdateAsync(user);
+        }
+
+        public async Task AssignRoleToUserAsync(string userId, string[] roles)
+        {
+            AppUser user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                var userRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user, userRoles);
+
+                await _userManager.AddToRolesAsync(user, roles);
+            }
+            else
+                throw new UserNotFoundException();
+        }
+
+        public async Task<string[]> GetUserRolesAsync(string userId)
+        {
+            AppUser user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+                return (await _userManager.GetRolesAsync(user)).ToArray();
+            else
+                throw new UserNotFoundException();
         }
     }
 }
