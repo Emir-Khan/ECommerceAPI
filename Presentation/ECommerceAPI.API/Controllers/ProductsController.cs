@@ -6,11 +6,13 @@ using ECommerceAPI.Application.Features.Commands.Product.ChangeShowcase;
 using ECommerceAPI.Application.Features.Commands.Product.CreateProduct;
 using ECommerceAPI.Application.Features.Commands.Product.RemoveProduct;
 using ECommerceAPI.Application.Features.Commands.Product.UpdateProduct;
+using ECommerceAPI.Application.Features.Commands.Product.UpdateQrCodeProductStock;
 using ECommerceAPI.Application.Features.Commands.ProductImageFile.RemoveProductImage;
 using ECommerceAPI.Application.Features.Commands.ProductImageFile.UploadProductImage;
 using ECommerceAPI.Application.Features.Queries.Product.GetAllProduct;
 using ECommerceAPI.Application.Features.Queries.Product.GetByIdProduct;
 using ECommerceAPI.Application.Features.Queries.ProductImageFile.GetProductImages;
+using ECommerceAPI.Application.Features.Queries.ProductImageFile.GetProductShowCaseImage;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +45,13 @@ namespace ECommerceAPI.API.Controllers
         {
             var qrCode = await _productService.ProductQrCodeAsync(productId);
             return File(qrCode, "image/png");
+        }
+
+        [HttpPut("qrcode")]
+        public async Task<IActionResult> UpdateQrCodeProductStock(UpdateQrCodeProductStockCommandRequest updateQrCodeProductStockCommandRequest)
+        {
+            var response = await _mediator.Send(updateQrCodeProductStockCommandRequest);
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
@@ -110,6 +119,15 @@ namespace ECommerceAPI.API.Controllers
         public async Task<IActionResult> ChangeShowcaseImage([FromQuery] ChangeShowcaseCommandRequest changeShowcaseCommandRequest)
         {
             var response = await _mediator.Send(changeShowcaseCommandRequest);
+            return Ok(response);
+        }
+
+        [HttpGet("[action]")]
+        [Authorize(AuthenticationSchemes = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Reading, Definition = "Get Showcase Image")]
+        public async Task<IActionResult> GetShowcaseImage([FromQuery] GetProductShowCaseImageQueryRequest getProductShowCaseImageQueryRequest)
+        {
+            var response = await _mediator.Send(getProductShowCaseImageQueryRequest);
             return Ok(response);
         }
     }

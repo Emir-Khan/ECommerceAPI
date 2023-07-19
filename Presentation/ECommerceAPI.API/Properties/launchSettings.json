@@ -12,7 +12,7 @@
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ExternalLoginSettings__Facebook__ClientSecret": "31818f04bb174041aa57cf84362df2c3"
+        "ExternalLoginSettings__Facebook__ClientSecret": "345176353c4ee768c6b6340246a99c50"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7131;http://localhost:5131"

@@ -118,7 +118,8 @@ namespace ECommerceAPI.Persistence.Services
                 {
                     bi.Product.Name,
                     bi.Product.Price,
-                    bi.Quantity
+                    bi.Quantity,
+                    bi.ProductId
                 }),
                 Address = data.Address,
                 CreatedDate = data.CreatedDate,
