@@ -107,11 +107,16 @@ namespace ECommerceAPI.Persistence.Services
 
         public async Task UpdateQuantityAsync(VM_Update_BasketItem basketItem)
         {
-            BasketItem? _basketItem = await _basketItemReadRepository.GetByIdAsync(basketItem.BasketItemId);
+            BasketItem? _basketItem = await _basketItemReadRepository.Table.Include(bi => bi.Product).FirstOrDefaultAsync(bi => bi.Id == Guid.Parse(basketItem.BasketItemId));
             if (_basketItem != null)
             {
-                _basketItem.Quantity = basketItem.Quantity;
-                await _basketItemWriteRepository.SaveAsync();
+                if (_basketItem.Product.Stock > _basketItem.Quantity)
+                {
+                    _basketItem.Quantity = basketItem.Quantity;
+                    await _basketItemWriteRepository.SaveAsync();
+                }
+                else
+                    throw new Exception($"There is not enough stock of {_basketItem.Product.Name} product. Max stock is {_basketItem.Product.Stock}");
             }
         }
         public Basket? Basket => ContextUser().Result;

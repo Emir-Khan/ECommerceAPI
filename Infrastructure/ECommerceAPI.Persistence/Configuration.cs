@@ -16,7 +16,7 @@ namespace ECommerceAPI.Persistence
                 ConfigurationManager configurationManager = new();
                 try
                 {
-                    configurationManager.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../Presentation/ETicaretAPI.API"));
+                    configurationManager.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../Presentation/ECommerceAPI.API"));
                     configurationManager.AddJsonFile("appsettings.json");
                 }
                 catch
