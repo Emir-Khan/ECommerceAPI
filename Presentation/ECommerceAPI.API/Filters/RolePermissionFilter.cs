@@ -28,20 +28,24 @@ namespace ECommerceAPI.API.Filters
                 var attribute = descriptor.MethodInfo.GetCustomAttribute<AuthorizeDefinitionAttribute>();
                 var httpAttr = descriptor.MethodInfo.GetCustomAttribute<HttpMethodAttribute>();
 
-                var code = $"{(httpAttr != null ? httpAttr.HttpMethods.First() : HttpMethods.Get)}.{attribute.ActionType}.{attribute.Definition.Replace(" ", "")}";
+                if (attribute != null)
+                {
+                    var code = $"{(httpAttr != null ? httpAttr.HttpMethods.First() : HttpMethods.Get)}.{attribute.ActionType}.{attribute.Definition.Replace(" ", "")}";
 
-                var hasRole = await _userService.HasRolePermissionToEndpointAsync(name, code);
+                    var hasRole = await _userService.HasRolePermissionToEndpointAsync(name, code);
 
-                if (!hasRole)
-                { 
-                    context.Result = new StatusCodeResult((int)HttpStatusCode.Forbidden);
-                    return;
+                    if (!hasRole)
+                    {
+                        context.Result = new StatusCodeResult((int)HttpStatusCode.Forbidden);
+                        return;
+                    }
                 }
-                else
-                    await next();
+                await next();
             }
             else
+            {
                 await next();
+            }
         }
     }
 }

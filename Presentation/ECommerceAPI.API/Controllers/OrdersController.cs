@@ -38,8 +38,8 @@ namespace ECommerceAPI.API.Controllers
             return Ok(response);
         }
         [HttpGet("{Id}")]
-        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Orders, ActionType = ActionType.Reading, Definition = "Get Order By Id")]
-        public async Task<IActionResult> GetOrderById([FromRoute] GetOrderByIdQueryRequest getOrderByIdQueryRequest)
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Orders, ActionType = ActionType.Reading, Definition = "Get Order Details By Id")]
+        public async Task<IActionResult> GetOrderDetailsById([FromRoute] GetOrderByIdQueryRequest getOrderByIdQueryRequest)
         {
             var response = await _mediator.Send(getOrderByIdQueryRequest);
             return Ok(response);

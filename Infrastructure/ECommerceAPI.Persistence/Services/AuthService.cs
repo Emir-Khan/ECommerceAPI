@@ -115,7 +115,7 @@ namespace ECommerceAPI.Persistence.Services
             if (result.Succeeded)
             {
                 Token token = _tokenHandler.CreateAccessToken(user, accessTokenLifetime);
-                await _userService.UpdateRefreshTokenAsync(token.RefreshToken, token.Expiration, 900, user);
+                await _userService.UpdateRefreshTokenAsync(token.RefreshToken, token.Expiration, 9000, user);
                 return token;
             }
             throw new AuthenticationException();

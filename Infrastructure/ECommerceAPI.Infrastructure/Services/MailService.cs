@@ -43,7 +43,7 @@ namespace ECommerceAPI.Infrastructure.Services
                 IsBodyHtml = isBodyHtml,
                 Subject = subject,
                 Body = body,
-                From = new(_configuration["Mail:Username"], "Emirhan-Commerce", Encoding.UTF8)
+                From = new(_configuration["Mail:EMail"], "Emirhan-Commerce")
             };
 
             foreach (var to in toArray)

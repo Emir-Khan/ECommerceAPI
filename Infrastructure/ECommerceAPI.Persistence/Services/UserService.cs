@@ -105,6 +105,10 @@ namespace ECommerceAPI.Persistence.Services
                 throw new UserNotFoundException();
         }
 
+        public async Task<string[]> GetUserRolesAsync(AppUser user)
+            => (await _userManager.GetRolesAsync(user)).ToArray();
+
+
         public async Task<bool> HasRolePermissionToEndpointAsync(string userName, string code)
         {
             var userRoles = await GetUserRolesAsync(userName);
@@ -121,6 +125,25 @@ namespace ECommerceAPI.Persistence.Services
                     return true;
 
             return false;
+        }
+
+        public async Task<UserDetail> GetUserDetailAsync(string userNameOrId)
+        {
+            AppUser user = await _userManager.FindByIdAsync(userNameOrId);
+            user ??= await _userManager.FindByNameAsync(userNameOrId);
+
+            if (user == null) throw new UserNotFoundException();
+
+            var userRoles = await GetUserRolesAsync(user);
+
+            return new()
+            {
+                Id = new Guid(user.Id),
+                UserName = user.UserName,
+                Email = user.Email,
+                NameSurname = user.NameSurname,
+                Roles = userRoles
+            };
         }
     }
 }

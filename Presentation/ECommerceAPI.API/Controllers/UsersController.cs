@@ -3,7 +3,7 @@ using ECommerceAPI.Application.Enums;
 using ECommerceAPI.Application.Features.Commands.AppUser.AssignRoleToUser;
 using ECommerceAPI.Application.Features.Commands.AppUser.CreateUser;
 using ECommerceAPI.Application.Features.Commands.AppUser.UpdatePassword;
-using ECommerceAPI.Application.Features.Commands.AuthorizationEndpoint.AssignRoleEndpoint;
+using ECommerceAPI.Application.Features.Queries.AppUser;
 using ECommerceAPI.Application.Features.Queries.AppUser.GetAllUsers;
 using ECommerceAPI.Application.Features.Queries.AppUser.GetUserRoles;
 using MediatR;
@@ -21,6 +21,14 @@ namespace ECommerceAPI.API.Controllers
         public UsersController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("[action]")]
+        [Authorize(AuthenticationSchemes = "Admin")]
+        public async Task<IActionResult> Me()
+        {
+            var response = await _mediator.Send(new GetMeQueryRequest());
+            return Ok(response);
         }
 
         [HttpPost]
