@@ -23,16 +23,17 @@ namespace ECommerceAPI.Persistence.Services
 
         public async Task<CreateUserResponse> CreateAsync(CreateUser model)
         {
+            string userId = Guid.NewGuid().ToString();
             var result = await _userManager.CreateAsync(new()
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = userId,
                 UserName = model.UserName,
                 Email = model.Email,
                 NameSurname = model.NameSurname
             }, model.Password);
 
 
-            CreateUserResponse response = new() { Succeeded = result.Succeeded };
+            CreateUserResponse response = new() { Succeeded = result.Succeeded, UserId = userId };
 
             if (result.Succeeded)
                 response.Message = "User Created Successfully";
@@ -58,7 +59,7 @@ namespace ECommerceAPI.Persistence.Services
 
         public async Task UpdatePasswordAsync(string userId, string resetToken, string newPassword)
         {
-            AppUser user = await _userManager.FindByIdAsync(userId);
+            AppUser? user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
                 resetToken = resetToken.UrlDecode();
@@ -82,7 +83,7 @@ namespace ECommerceAPI.Persistence.Services
 
         public async Task AssignRoleToUserAsync(string userId, string[] roles)
         {
-            AppUser user = await _userManager.FindByIdAsync(userId);
+            AppUser? user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
@@ -96,7 +97,7 @@ namespace ECommerceAPI.Persistence.Services
 
         public async Task<string[]> GetUserRolesAsync(string userIdOrName)
         {
-            AppUser user = await _userManager.FindByIdAsync(userIdOrName);
+            AppUser? user = await _userManager.FindByIdAsync(userIdOrName);
             user ??= await _userManager.FindByNameAsync(userIdOrName);
 
             if (user != null)
@@ -111,25 +112,18 @@ namespace ECommerceAPI.Persistence.Services
 
         public async Task<bool> HasRolePermissionToEndpointAsync(string userName, string code)
         {
-            var userRoles = await GetUserRolesAsync(userName);
-
-            if (!userRoles.Any())
-                return false;
-
             Endpoint? endpoint = await _endpointReadRepository.Table.Include(e => e.Roles).FirstOrDefaultAsync(e => e.Code == code);
 
             if (endpoint == null) return false;
+            if (endpoint.Roles == null || endpoint.Roles.Count == 0) return true;
 
-            foreach (var role in userRoles)
-                if (endpoint.Roles.Any(r => r.Name == role))
-                    return true;
-
-            return false;
+            var userRoles = await GetUserRolesAsync(userName);
+            return userRoles.Length > 0 && userRoles.Any(role => endpoint.Roles.Any(r => r.Name == role));
         }
 
         public async Task<UserDetail> GetUserDetailAsync(string userNameOrId)
         {
-            AppUser user = await _userManager.FindByIdAsync(userNameOrId);
+            AppUser? user = await _userManager.FindByIdAsync(userNameOrId);
             user ??= await _userManager.FindByNameAsync(userNameOrId);
 
             if (user == null) throw new UserNotFoundException();

@@ -1,18 +1,15 @@
 ﻿using ECommerceAPI.Application.Abstractions.Services;
 using ECommerceAPI.Application.DTOs.User;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace ECommerceAPI.Application.Features.Commands.AppUser.CreateUser
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommandRequest, CreateUserCommandResponse>
     {
-        readonly UserManager<Domain.Entities.Identity.AppUser> _userManager;
         readonly IUserService _userService;
 
-        public CreateUserCommandHandler(UserManager<Domain.Entities.Identity.AppUser> userManager, IUserService userService)
+        public CreateUserCommandHandler(IUserService userService)
         {
-            _userManager = userManager;
             _userService = userService;
         }
 
@@ -26,6 +23,8 @@ namespace ECommerceAPI.Application.Features.Commands.AppUser.CreateUser
                 UserName = request.UserName,
                 PasswordConfirm = request.PasswordConfirm
             });
+
+            //await _userService.AssignRoleToUserAsync(response.UserId, ["Customer"]);
 
             return new()
             {
