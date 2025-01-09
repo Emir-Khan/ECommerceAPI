@@ -16,15 +16,15 @@
 
 ##  Table of Contents
 
-- [ Overview](#-overview)
-- [ Features](#-features)
-- [ Project Structure](#-project-structure)
-  - [ Project Index](#-project-index)
-- [ Getting Started](#-getting-started)
-  - [ Prerequisites](#-prerequisites)
-  - [ Installation](#-installation)
-  - [ Usage](#-usage)
-- [ Project Roadmap](#-project-roadmap)
+- [Overview](#Overview)
+- [Features](#Features)
+- [Project Structure](#Project-Structure)
+  - [Project Index](#Project-Index)
+- [Getting Started](#Getting-Started)
+  - [Prerequisites](#Prerequisites)
+  - [Installation](#Installation)
+  - [Usage](#Usage)
+- [Project Roadmap](#Project-Roadmap)
 
 ---
 
@@ -62,7 +62,7 @@ ECommerceAPI is a robust and scalable API designed to handle various authenticat
 
 ---
 
-##  Project Structure
+##  Project-Structure
 
 ```sh
 └── ECommerceAPI/
@@ -78,7 +78,7 @@ ECommerceAPI is a robust and scalable API designed to handle various authenticat
 ```
 
 
-###  Project Index
+###  Project-Index
 <details open>
 	<summary><b><code>ECOMMERCEAPI/</code></b></summary>	
 	<details> <!-- Core Submodule -->
@@ -2216,7 +2216,7 @@ Run ECommerceAPI using the following command: &nbsp; [<img align="center" src="h
 
 
 ---
-##  Project Roadmap
+##  Project-Roadmap
 
 - [X] **`Task 1`**: <strike>Update to .Net 9.0</strike>
 - [ ] **`Task 2`**: Redis Caching.
