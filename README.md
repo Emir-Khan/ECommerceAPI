@@ -80,18 +80,7 @@ ECommerceAPI is a robust and scalable API designed to handle various authenticat
 
 ###  Project Index
 <details open>
-	<summary><b><code>ECOMMERCEAPI/</code></b></summary>
-	<details> <!-- __root__ Submodule -->
-		<summary><b>__root__</b></summary>
-		<blockquote>
-			<table>
-			<tr>
-				<td><b><a href='https://github.com/Emir-Khan/ECommerceAPI/blob/master/ECommerceAPI.sln'>ECommerceAPI.sln</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			</table>
-		</blockquote>
-	</details>
+	<summary><b><code>ECOMMERCEAPI/</code></b></summary>	
 	<details> <!-- Core Submodule -->
 		<summary><b>Core</b></summary>
 		<blockquote>
