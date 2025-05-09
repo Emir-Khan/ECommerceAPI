@@ -1,26 +1,25 @@
+using ECommerceAPI.API.Configurations.ColumnWriters;
+using ECommerceAPI.API.Extensions;
+using ECommerceAPI.API.Filters;
 using ECommerceAPI.Application;
 using ECommerceAPI.Application.Validators.Products;
 using ECommerceAPI.Infrastructure;
 using ECommerceAPI.Infrastructure.Filters;
 using ECommerceAPI.Infrastructure.Services.Storage.Azure;
 using ECommerceAPI.Persistence;
-using ECommerceAPI.Infrastructure.Services.Storage.Local;
+using ECommerceAPI.SignalR;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Security.Claims;
-using NpgsqlTypes;
-using Serilog.Sinks.PostgreSQL;
-using Serilog;
-using Serilog.Core;
-using ECommerceAPI.API.Configurations.ColumnWriters;
-using Serilog.Context;
 using Microsoft.AspNetCore.HttpLogging;
-using ECommerceAPI.API.Extensions;
-using ECommerceAPI.SignalR;
-using ECommerceAPI.API.Filters;
+using Microsoft.IdentityModel.Tokens;
+using NpgsqlTypes;
+using Serilog;
+using Serilog.Context;
+using Serilog.Core;
+using Serilog.Sinks.PostgreSQL;
+using System.Security.Claims;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,8 +38,8 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 
 Logger log = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("logs/log.txt")
-    .WriteTo.PostgreSQL(builder.Configuration.GetConnectionString("PostgreSQL"), "logs",
+    .WriteTo.Async(a => a.File("logs/log.txt"))
+    .WriteTo.Async(a => a.PostgreSQL(builder.Configuration.GetConnectionString("PostgreSQL"), "logs",
         needAutoCreateTable: true,
         columnOptions: new Dictionary<string, ColumnWriterBase>
         {
@@ -51,8 +50,8 @@ Logger log = new LoggerConfiguration()
             {"exception", new ExceptionColumnWriter(NpgsqlDbType.Text)},
             {"log_event", new LogEventSerializedColumnWriter(NpgsqlDbType.Json)},
             {"user_name", new UsernameColumnWriter()}
-        })
-    .WriteTo.Seq(builder.Configuration["Seq:ServerURL"])
+        }))
+    .WriteTo.Async(a => a.Seq(builder.Configuration["Seq:ServerURL"]))
     .Enrich.FromLogContext()
     .MinimumLevel.Information()
     .CreateLogger();

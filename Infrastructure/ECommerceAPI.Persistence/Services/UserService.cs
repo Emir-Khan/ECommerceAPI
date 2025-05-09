@@ -115,7 +115,6 @@ namespace ECommerceAPI.Persistence.Services
             Endpoint? endpoint = await _endpointReadRepository.Table.Include(e => e.Roles).FirstOrDefaultAsync(e => e.Code == code);
 
             if (endpoint == null) return false;
-            if (endpoint.Roles == null || endpoint.Roles.Count == 0) return true;
 
             var userRoles = await GetUserRolesAsync(userName);
             return userRoles.Length > 0 && userRoles.Any(role => endpoint.Roles.Any(r => r.Name == role));
