@@ -42,7 +42,7 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpPost("facebook-login")]
-        public async Task<IActionResult> FacbookLogin(FacebookLoginCommandRequest facebookLoginCommandRequest)
+        public async Task<IActionResult> FacebookLogin(FacebookLoginCommandRequest facebookLoginCommandRequest)
         {
             var response = await _mediator.Send(facebookLoginCommandRequest);
             return Ok(response);
