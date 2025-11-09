@@ -1,4 +1,4 @@
-﻿using ECommerceAPI.Domain.Entities;
+using ECommerceAPI.Domain.Entities;
 using ECommerceAPI.Domain.Entities.Common;
 using ECommerceAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -22,6 +22,8 @@ namespace ECommerceAPI.Persistence.Contexts
         public DbSet<CompletedOrder> CompletedOrders { get; set; }
         public DbSet<Menu> Menus { get; set; }
         public DbSet<Endpoint> Endpoints { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -42,12 +44,26 @@ namespace ECommerceAPI.Persistence.Contexts
                 .WithOne(co => co.Order)
                 .HasForeignKey<CompletedOrder>(o => o.OrderId);
 
+            builder.Entity<Order>()
+                .HasOne(o => o.Payment)
+                .WithOne(p => p.Order)
+                .HasForeignKey<Payment>(p => p.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Payment>()
+                .HasMany(p => p.Transactions)
+                .WithOne(t => t.Payment)
+                .HasForeignKey(t => t.PaymentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Payment>()
+                .HasIndex(p => p.ExternalReference)
+                .IsUnique();
+
             base.OnModelCreating(builder);
         }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            //ChangeTracker : Entityler üzerinden yapılan değişiklerin ya da yeni eklenen verinin yakalanmasını sağlayan propertydir. Update operasyonlarında Track edilen verileri yakalayıp elde etmemizi sağlar.
-
             var datas = ChangeTracker
                  .Entries<BaseEntity>();
 

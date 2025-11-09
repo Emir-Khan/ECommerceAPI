@@ -129,3 +129,7 @@ app.MapControllers();
 app.MapHubs();
 
 app.Run();
+
+public partial class Program
+{
+}

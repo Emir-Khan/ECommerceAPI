@@ -1,5 +1,6 @@
-﻿using ECommerceAPI.Application.Abstractions.Services;
+using ECommerceAPI.Application.Abstractions.Services;
 using ECommerceAPI.Application.DTOs.Order;
+using ECommerceAPI.Application.DTOs.Payments;
 using ECommerceAPI.Application.Repositories;
 using ECommerceAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -43,21 +44,73 @@ namespace ECommerceAPI.Persistence.Services
         {
             var orderCode = (new Random().NextDouble() * 10000).ToString();
             orderCode = orderCode.Substring(orderCode.IndexOf(",") + 1, orderCode.Length - orderCode.IndexOf(",") - 1);
-            await _orderWriteRepository.AddAsync(new()
+
+            var orderId = Guid.Parse(createOrder.BasketId);
+            var order = new Order
             {
-                Id = Guid.Parse(createOrder.BasketId),
+                Id = orderId,
                 Address = createOrder.Address,
                 Description = createOrder.Description,
-                OrderCode = orderCode
+                OrderCode = orderCode,
+                Payment = new Payment
+                {
+                    OrderId = orderId,
+                    ProviderName = createOrder.ProviderName,
+                    Status = createOrder.Status,
+                    Amount = createOrder.Amount,
+                    Currency = createOrder.Currency,
+                    ExternalReference = createOrder.ExternalReference,
+                    Transactions =
+                    {
+                        new PaymentTransaction
+                        {
+                            ProviderName = createOrder.ProviderName,
+                            Status = createOrder.Status,
+                            Amount = createOrder.Amount,
+                            Currency = createOrder.Currency,
+                            ExternalReference = createOrder.ExternalReference,
+                            OccurredOn = DateTime.UtcNow
+                        }
+                    }
+                }
+            };
+
+            await _orderWriteRepository.AddAsync(order);
+            await _orderWriteRepository.SaveAsync();
+        }
+
+        public async Task UpdatePaymentAsync(PaymentConfirmationResponse confirmationResponse)
+        {
+            var order = await _orderReadRepository.Table
+                .Include(o => o.Payment)
+                .ThenInclude(p => p.Transactions)
+                .FirstOrDefaultAsync(o => o.Payment != null && o.Payment.ExternalReference == confirmationResponse.ExternalReference);
+
+            if (order?.Payment == null)
+                return;
+
+            order.Payment.Status = confirmationResponse.Status;
+            order.Payment.Amount = confirmationResponse.Amount;
+            order.Payment.Currency = confirmationResponse.Currency;
+
+            order.Payment.Transactions.Add(new PaymentTransaction
+            {
+                ProviderName = confirmationResponse.ProviderName,
+                Status = confirmationResponse.Status,
+                Amount = confirmationResponse.Amount,
+                Currency = confirmationResponse.Currency,
+                ExternalReference = confirmationResponse.ExternalReference,
+                OccurredOn = DateTime.UtcNow
             });
+
             await _orderWriteRepository.SaveAsync();
         }
 
         public async Task<ListOrder> GetAllOrdersAsync(int page, int size)
         {
             var query = _orderReadRepository.Table.Include(o => o.Basket).ThenInclude(b => b.User)
-                .Include(u => u.Basket).ThenInclude(b => b.BasketItems).ThenInclude(bi => bi.Product);
-
+                .Include(u => u.Basket).ThenInclude(b => b.BasketItems).ThenInclude(bi => bi.Product)
+                .Include(o => o.Payment);
 
             var paginatedData = query.Skip(page * size).Take(size);
 
@@ -71,6 +124,7 @@ namespace ECommerceAPI.Persistence.Services
                            order.CreatedDate,
                            order.OrderCode,
                            order.Basket,
+                           order.Payment,
                            Completed = _co != null
                        };
 
@@ -84,7 +138,9 @@ namespace ECommerceAPI.Persistence.Services
                     o.Basket.User.UserName,
                     o.CreatedDate,
                     TotalPrice = o.Basket.BasketItems.Sum(bi => bi.Product.Price * bi.Quantity),
-                    o.Completed
+                    o.Completed,
+                    PaymentStatus = o.Payment != null ? o.Payment.Status : null,
+                    PaymentReference = o.Payment != null ? o.Payment.ExternalReference : null
                 }).ToListAsync()
             };
         }
@@ -94,7 +150,8 @@ namespace ECommerceAPI.Persistence.Services
             var includedData = _orderReadRepository.Table
                 .Include(o => o.Basket)
                 .ThenInclude(b => b.BasketItems)
-                .ThenInclude(bi => bi.Product);
+                .ThenInclude(bi => bi.Product)
+                .Include(o => o.Payment);
 
             var data = await (from order in includedData
                               join completedOrder in _completedOrderReadRepository.Table
@@ -106,6 +163,7 @@ namespace ECommerceAPI.Persistence.Services
                                   order.CreatedDate,
                                   order.OrderCode,
                                   order.Basket,
+                                  order.Payment,
                                   Completed = _co != null,
                                   order.Address,
                                   order.Description

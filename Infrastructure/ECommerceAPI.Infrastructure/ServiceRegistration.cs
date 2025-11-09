@@ -1,10 +1,11 @@
-﻿using ECommerceAPI.Application.Abstractions.Services;
+using ECommerceAPI.Application.Abstractions.Services;
 using ECommerceAPI.Application.Abstractions.Services.Configurations;
 using ECommerceAPI.Application.Abstractions.Storage;
 using ECommerceAPI.Application.Abstractions.Token;
 using ECommerceAPI.Infrastructure.Enums;
 using ECommerceAPI.Infrastructure.Services;
 using ECommerceAPI.Infrastructure.Services.Configuration;
+using ECommerceAPI.Infrastructure.Services.Payments;
 using ECommerceAPI.Infrastructure.Services.Storage;
 using ECommerceAPI.Infrastructure.Services.Storage.Azure;
 using ECommerceAPI.Infrastructure.Services.Storage.Local;
@@ -22,6 +23,7 @@ namespace ECommerceAPI.Infrastructure
             services.AddScoped<IMailService, MailService>();
             services.AddScoped<IApplicationService, ApplicationService>();
             services.AddScoped<IQRCodeService, QRCodeService>();
+            services.AddScoped<IPaymentService, StripePaymentService>();
         }
         public static void AddStorage<T>(this IServiceCollection services) where T : Storage, IStorage
         {
@@ -38,7 +40,6 @@ namespace ECommerceAPI.Infrastructure
                     services.AddScoped<IStorage, AzureStorage>();
                     break;
                 case StorageType.AWS:
-                    //services.AddScoped<IStorage, T>();
                     break;
                 default:
                     break;

@@ -1,4 +1,4 @@
-﻿using ECommerceAPI.Application.Consts;
+using ECommerceAPI.Application.Consts;
 using ECommerceAPI.Application.CustomAttributes;
 using ECommerceAPI.Application.Enums;
 using ECommerceAPI.Application.Features.Commands.Order.CompleteOrder;
@@ -27,8 +27,11 @@ namespace ECommerceAPI.API.Controllers
         [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Orders, ActionType = ActionType.Writing, Definition = "Create Order")]
         public async Task<IActionResult> CreateOrder(CreateOrderCommandRequest createOrderCommandRequest)
         {
-            await _mediator.Send(createOrderCommandRequest);
-            return Ok();
+            var response = await _mediator.Send(createOrderCommandRequest);
+            if (!response.Success)
+                return BadRequest(response);
+
+            return Ok(response);
         }
         [HttpGet]
         [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Orders, ActionType = ActionType.Reading, Definition = "Get All Orders")]

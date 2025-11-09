@@ -1,4 +1,4 @@
-﻿using ECommerceAPI.Domain.Entities.Common;
+using ECommerceAPI.Domain.Entities.Common;
 
 namespace ECommerceAPI.Domain.Entities
 {
@@ -10,5 +10,6 @@ namespace ECommerceAPI.Domain.Entities
 
         public Basket Basket { get; set; }
         public CompletedOrder CompletedOrder { get; set; }
+        public Payment? Payment { get; set; }
     }
 }
