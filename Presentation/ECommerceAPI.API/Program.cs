@@ -6,6 +6,7 @@ using ECommerceAPI.Application.Validators.Products;
 using ECommerceAPI.Infrastructure;
 using ECommerceAPI.Infrastructure.Filters;
 using ECommerceAPI.Infrastructure.Services.Storage.Azure;
+using ECommerceAPI.Infrastructure.Services.Storage.Local;
 using ECommerceAPI.Persistence;
 using ECommerceAPI.SignalR;
 using FluentValidation;
@@ -29,32 +30,52 @@ builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServcies();
 builder.Services.AddSignalRServices();
 
-//builder.Services.AddStorage<LocalStorage>();
-builder.Services.AddStorage<AzureStorage>();
+var storageConnectionString = builder.Configuration["Storage:Azure"];
+if (!string.IsNullOrWhiteSpace(storageConnectionString))
+{
+    builder.Services.AddStorage<AzureStorage>();
+}
+else
+{
+    builder.Services.AddStorage<LocalStorage>();
+}
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
     policy.WithOrigins("https://localhost:4200", "http://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials()
 ));
 
-Logger log = new LoggerConfiguration()
+var loggerConfiguration = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.Async(a => a.File("logs/log.txt"))
-    .WriteTo.Async(a => a.PostgreSQL(builder.Configuration.GetConnectionString("PostgreSQL"), "logs",
-        needAutoCreateTable: true,
-        columnOptions: new Dictionary<string, ColumnWriterBase>
-        {
-            {"message", new RenderedMessageColumnWriter(NpgsqlDbType.Text)},
-            {"message_template", new MessageTemplateColumnWriter(NpgsqlDbType.Text)},
-            {"level", new LevelColumnWriter(true , NpgsqlDbType.Varchar)},
-            {"time_stamp", new TimestampColumnWriter(NpgsqlDbType.Timestamp)},
-            {"exception", new ExceptionColumnWriter(NpgsqlDbType.Text)},
-            {"log_event", new LogEventSerializedColumnWriter(NpgsqlDbType.Json)},
-            {"user_name", new UsernameColumnWriter()}
-        }))
-    .WriteTo.Async(a => a.Seq(builder.Configuration["Seq:ServerURL"]))
     .Enrich.FromLogContext()
-    .MinimumLevel.Information()
-    .CreateLogger();
+    .MinimumLevel.Information();
+
+var postgresConnectionString = builder.Configuration.GetConnectionString("PostgreSQL");
+if (!string.IsNullOrWhiteSpace(postgresConnectionString))
+{
+    var columnOptions = new Dictionary<string, ColumnWriterBase>
+    {
+        {"message", new RenderedMessageColumnWriter(NpgsqlDbType.Text)},
+        {"message_template", new MessageTemplateColumnWriter(NpgsqlDbType.Text)},
+        {"level", new LevelColumnWriter(true , NpgsqlDbType.Varchar)},
+        {"time_stamp", new TimestampColumnWriter(NpgsqlDbType.Timestamp)},
+        {"exception", new ExceptionColumnWriter(NpgsqlDbType.Text)},
+        {"log_event", new LogEventSerializedColumnWriter(NpgsqlDbType.Json)},
+        {"user_name", new UsernameColumnWriter()}
+    };
+
+    loggerConfiguration = loggerConfiguration.WriteTo.Async(a => a.PostgreSQL(postgresConnectionString, "logs",
+        needAutoCreateTable: true,
+        columnOptions: columnOptions));
+}
+
+var seqServerUrl = builder.Configuration["Seq:ServerURL"];
+if (!string.IsNullOrWhiteSpace(seqServerUrl))
+{
+    loggerConfiguration = loggerConfiguration.WriteTo.Async(a => a.Seq(seqServerUrl));
+}
+
+Logger log = loggerConfiguration.CreateLogger();
 
 builder.Host.UseSerilog(log);
 
@@ -78,6 +99,10 @@ builder.Services.AddFluentValidationAutoValidation().AddValidatorsFromAssemblyCo
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var tokenAudience = builder.Configuration["Token:Audience"] ?? "test-audience";
+var tokenIssuer = builder.Configuration["Token:Issuer"] ?? "test-issuer";
+var tokenSecurityKey = builder.Configuration["Token:SecurityKey"] ?? "TestSecurityKey1234567890TestSecurityKey1234567890";
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer("Admin", options =>
     {
@@ -88,9 +113,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true, // Time Check
             ValidateIssuerSigningKey = true, // Secret Key Check
 
-            ValidAudience = builder.Configuration["Token:Audience"],
-            ValidIssuer = builder.Configuration["Token:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
+            ValidAudience = tokenAudience,
+            ValidIssuer = tokenIssuer,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSecurityKey)),
             LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
 
             NameClaimType = ClaimTypes.Name

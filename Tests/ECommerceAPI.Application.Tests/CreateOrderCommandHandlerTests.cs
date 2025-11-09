@@ -100,7 +100,7 @@ namespace ECommerceAPI.Application.Tests
 
             Assert.True(result.Success);
             Assert.Equal("ref123", result.PaymentReference);
-            _orderServiceMock.Verify(o => o.CreateOrder(It.Is<ECommerceAPI.Application.DTOs.Order.CreateOrder>>(dto => dto.Amount == 15 && dto.Currency == "USD" && dto.ExternalReference == "ref123")), Times.Once);
+            _orderServiceMock.Verify(o => o.CreateOrder(It.Is<ECommerceAPI.Application.DTOs.Order.CreateOrder>(dto => dto.Amount == 15 && dto.Currency == "USD" && dto.ExternalReference == "ref123")), Times.Once);
             _orderHubServiceMock.Verify(h => h.OrderAddedMessageAsync(It.IsAny<string>()), Times.Once);
         }
     }
