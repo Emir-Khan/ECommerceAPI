@@ -7,15 +7,25 @@ using ECommerceAPI.Persistence.Repositories;
 using ECommerceAPI.Persistence.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ECommerceAPI.Persistence
 {
     public static class ServiceRegistration
     {
-        public static void AddPersistenceServices(this IServiceCollection services)
+        public static void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ECommerceAPIDbContext>(options => options.UseNpgsql(Configuration.ConnectionString));
+            var connectionString = configuration.GetConnectionString("PostgreSQL");
+
+            if (!string.IsNullOrWhiteSpace(connectionString))
+            {
+                services.AddDbContext<ECommerceAPIDbContext>(options => options.UseNpgsql(connectionString));
+            }
+            else
+            {
+                services.AddDbContext<ECommerceAPIDbContext>(options => options.UseInMemoryDatabase("ECommerceAPIDefault"));
+            }
             services.AddIdentity<AppUser, AppRole>(options =>
             {
                 options.Password.RequiredLength = 3;
